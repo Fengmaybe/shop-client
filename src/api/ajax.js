@@ -3,7 +3,8 @@
 在外面包裹着一层promise 用它去直接返回response.data数据的promise对象
  */
 import axios from 'axios';
-export default ajax = (url='',data={},type='GET') => {
+
+const ajax = (url='',data={},type='GET') => {
   //外面包裹一层promise，也就是函数最终返回还是一个promise
   return new Promise((resolve, reject) => {
     //执行之前的代码
@@ -36,4 +37,6 @@ export default ajax = (url='',data={},type='GET') => {
       reject(err);
     })
   })
-}
+};
+
+export default ajax;

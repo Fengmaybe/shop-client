@@ -2,17 +2,17 @@
   <section class="profile">
     <HeaderTop title="个人中心"/>
     <section class="profile-number">
-      <router-link class="profile-link" to="/login">
+      <router-link class="profile-link" :to="user._id ? '/userInfo' : '/login'">
         <div class="profile_image">
           <i class="iconfont icon-person"></i>
         </div>
         <div class="user-info">
-          <p class="user-info-top">登录/注册</p>
+          <p class="user-info-top" v-if="!user.phone">{{user.name || '登录/注册'}}</p>
           <p>
-                <span class="user-icon">
-                  <i class="iconfont icon-shouji icon-mobile"></i>
-                </span>
-            <span class="icon-mobile-number">暂无绑定手机号</span>
+          <span class="user-icon">
+            <i class="iconfont icon-shouji icon-mobile"></i>
+          </span>
+          <span class="icon-mobile-number">{{user.phone || '暂无绑定手机号'}}</span>
           </p>
         </div>
         <span class="arrow">
@@ -67,7 +67,7 @@
               <i class="iconfont icon-vip"></i>
             </span>
         <div class="my_order_div">
-          <span>硅谷外卖会员卡</span>
+          <span>港汇外卖会员卡</span>
           <span class="my_order_icon">
                 <i class="iconfont icon-jiantou1"></i>
               </span>
@@ -84,20 +84,41 @@
           <span>服务中心</span>
           <span class="my_order_icon">
                 <i class="iconfont icon-jiantou1"></i>
-              </span>
+          </span>
         </div>
       </a>
+    </section>
+    <section class="profile_my_order border-1px" v-show="user._id">
+      <!-- 退出登录 -->
+      <mt-button @click="layout" type="danger" size="large">退出登录</mt-button>
     </section>
   </section>
 </template>
 
 <script>
   import HeaderTop from '../../components/HeaderTop/HeaderTop';
-
+  import {mapState} from 'vuex';
+  import {MessageBox} from 'mint-ui';
   export default {
     components: {
-      HeaderTop
+      HeaderTop,
     },
+    computed:{
+      ...mapState(['user']),
+    },
+    methods:{
+      layout () {
+        MessageBox.confirm('确定退出么？').then(
+          action => {
+        //确定退出的回调函数
+          this.$store.dispatch('getLayout');
+        },
+        action => {
+         //取消登录
+          console.log('取消登录');
+        });
+      }
+    }
 
   }
 </script>

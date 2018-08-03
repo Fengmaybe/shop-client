@@ -1,7 +1,7 @@
 <template>
   <section class="msite">
     <!--首页头部-->
-    <HeaderTop title="广东省深圳市南山区港汇全进口生活馆">
+    <HeaderTop :title="address.name">
       <span class="header_search" slot="left">
          <i class="iconfont icon-sousuo"></i>
       </span>
@@ -11,112 +11,22 @@
     </HeaderTop>
     <!--首页导航-->
     <nav class="msite_nav">
-      <div class="swiper-container">
+      <div class="swiper-container" v-if="foodTypes.length">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <a href="javascript:" class="link_to_food">
+          <div class="swiper-slide" v-for="(foodTypes,index) in foodTypesArr" :key="index">
+            <a href="javascript:" class="link_to_food" v-for="(foodType,index) in foodTypes" :key="index">
               <div class="food_container">
-                <img src="./images/nav/1.jpg">
+                <img :src="imgBaseUrl + foodType.image_url">
               </div>
-              <span>甜品饮品</span>
+              <span>{{foodType.title}}</span>
             </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/2.jpg">
-              </div>
-              <span>商超便利</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/3.jpg">
-              </div>
-              <span>美食</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/4.jpg">
-              </div>
-              <span>简餐</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/5.jpg">
-              </div>
-              <span>新店特惠</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/6.jpg">
-              </div>
-              <span>准时达</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/7.jpg">
-              </div>
-              <span>预订早餐</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/8.jpg">
-              </div>
-              <span>土豪推荐</span>
-            </a>
-          </div>
-          <div class="swiper-slide">
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/9.jpg">
-              </div>
-              <span>甜品饮品</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/10.jpg">
-              </div>
-              <span>商超便利</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/11.jpg">
-              </div>
-              <span>美食</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/12.jpg">
-              </div>
-              <span>简餐</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/13.jpg">
-              </div>
-              <span>新店特惠</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/14.jpg">
-              </div>
-              <span>准时达</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/1.jpg">
-              </div>
-              <span>预订早餐</span>
-            </a>
-            <a href="javascript:" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/2.jpg">
-              </div>
-              <span>土豪推荐</span>
-            </a>
+
           </div>
         </div>
         <!-- Add Pagination -->
         <div class="swiper-pagination"></div>
       </div>
+      <img src="./images/msite_back.svg" alt="backSVG" v-else>
     </nav>
     <!--首页附近商家-->
     <div class="msite_shop_list">
@@ -133,6 +43,7 @@
 
   import Swiper from 'swiper';
   import 'swiper/dist/css/swiper.min.css';
+  import {mapState} from 'vuex';
 
   //引入头部slot组件
   import HeaderTop from '../../components/HeaderTop/HeaderTop';
@@ -140,20 +51,69 @@
   import ShopList from '../../components/ShopList/ShopList';
 
   export default {
+    data () {
+      return {
+        imgBaseUrl: 'https://fuss10.elemecdn.com'
+      }
+    },
     mounted () {
-      //创建swiper实例对象，来实现轮播（js方式）
-      new Swiper ('.swiper-container', {
-        //是否循环轮播
-        loop: true,
-        // 如果需要分页器
-        pagination: {
-          el: '.swiper-pagination',
-        },
-      })
+      //1.后台ajax获取数据保存到vuex中（不用map映射）
+      this.$store.dispatch('getFoodTypes');
+      this.$store.dispatch('getShops');
+    },
+    watch: {
+    //当我state中的foodTypes更新之后，我要处理一些逻辑，显示界面
+      foodTypes () {
+        //走到这里：说明数据已经更新了-->异步更新界面-->需求：在更新界面之后再去创建实现轮播的效果
+        this.$nextTick(()=>{  //一旦界面更新好了（前提有数据更新），就触发回调函数
+          //走到这里：数据已经更新好了，界面已经更新好了。
+          //创建swiper实例对象，来实现轮播（js方式）
+          new Swiper ('.swiper-container', {
+            //是否循环轮播
+            loop: true,
+            // 如果需要分页器
+            pagination: {
+              el: '.swiper-pagination',
+            },
+          })
+        });
+
+      }
+
     },
     components: {
       HeaderTop,
       ShopList
+    },
+    computed: {
+      //2.在组件中去读取状态
+      ...mapState(['address','foodTypes']),
+      //3.在模板中显示
+
+      //轮播的二维数组的逻辑（计算属性）
+      /*
+      根据其状态下this.foodTypes的数组转换一个二维数组--计算属性
+      由this.foodTypes得出一个新的状态的值显示在模板页面中
+      */
+      foodTypesArr () {
+        const foodTypes = this.foodTypes;
+        //外面的大数组
+        const arr = [];
+        //里面的小数组
+        let minArr = [];
+        foodTypes.forEach(e => {
+          //如果小数组满了，就生成新的小数组(先做，因为在插入小数组之前要确保小数组正常)
+          if(minArr.length === 8){
+            minArr = []
+          }
+          //如果小数组length为0，我就插入这个小数组到大数组。（为啥不在小数组满的时候插入呢，因为可能不会满）
+          if(minArr.length ===0){
+            arr.push(minArr);
+          }
+          minArr.push(e);
+        });
+        return arr;
+      }
     }
   }
 </script>
