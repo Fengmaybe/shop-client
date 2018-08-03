@@ -22,6 +22,8 @@
   export default {
     mounted () {
       this.$store.dispatch('getInfo');
+
+      this.$store.dispatch('getRatings');
     },
     components:{
       ShopHeader

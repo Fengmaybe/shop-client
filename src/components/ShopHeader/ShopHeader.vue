@@ -35,7 +35,7 @@
           <span class="content-tag">
             <span class="mini-tag">{{info.supports[0].name}}</span>
           </span>
-          <span class="activity-content">{{info.supports[0].content}}</span>
+          <span class="activity-content ellipsis">{{info.supports[0].content}}</span>
         </div>
       </div>
       <div class="discounts-right">
@@ -151,7 +151,7 @@
     .shop-nav
       background-size cover
       background-repeat no-repeat
-      height 70px
+      height 60px
       padding 5px 10px
       position relative
       &::before
@@ -253,6 +253,7 @@
       .shop-notice
         width 63%
         font-size 11px
+        line-height 11px
         font-weight 300
         color #999
         overflow hidden

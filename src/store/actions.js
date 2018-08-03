@@ -68,13 +68,16 @@ export default {
     }
   },
 
+
   //异步获取商家商品分类
-  async getGoods({commit}) {
+  async getGoods({commit},cb) {
     const result = await reqGoods();
     if (result.code === 0) {
       //请求成功
       commit(RECEIVE_GOODS, {goods: result.data});
     }
+    //此时数据已经更新了，界面更新是异步的,等待界面更新
+    cb && cb();
   },
   //异步获取评论
   async getRatings({commit}) {
