@@ -17,23 +17,24 @@
           <li class="food-list food-list-hook" v-for="item in goods">
             <h1 class="title">{{item.name}}</h1>
             <ul>
-              <li class="food-item bottom-border-1px" v-for="(good,index) in item.foods" :key="index">
+              <li class="food-item bottom-border-1px" v-for="(food,index) in item.foods"
+                  :key="index" @click="showFood(food)">
                 <div class="icon">
-                  <img width="57" height="57" :src="good.icon">
+                  <img width="57" height="57" :src="food.icon">
                 </div>
                 <div class="content">
-                  <h2 class="name">{{good.name}}</h2>
-                  <p class="desc">{{good.description}}</p>
+                  <h2 class="name">{{food.name}}</h2>
+                  <p class="desc">{{food.description}}</p>
                   <div class="extra">
-                    <span class="count">月售{{good.sellCount}}份</span>
-                    <span>好评率{{good.rating}}%</span>
+                    <span class="count">月售{{food.sellCount}}份</span>
+                    <span>好评率{{food.rating}}%</span>
                   </div>
                   <div class="price">
-                    <span class="now">￥{{good.price}}</span>
-                    <span class="old" v-show="good.oldPrice">￥{{good.oldPrice}}</span>
+                    <span class="now">￥{{food.price}}</span>
+                    <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-                    CartControl组件
+                    <CartControl :food="food" />
                   </div>
                 </div>
               </li>
@@ -42,6 +43,7 @@
         </ul>
       </div>
     </div>
+    <Food :food="food" ref="sonFood"/>
   </div>
 </template>
 
@@ -50,9 +52,13 @@
   import BScroll from 'better-scroll';
   import bounce from 'better-scroll';
 
+  import CartControl from '../../../components/CartControl/CartControl';
+  import Food from '../../../components/Food/Food';
+
   export default {
     mounted() {
       this.$store.dispatch('getGoods', () => {
+
         this.$nextTick(() => {
 
           //初始化的时候计算出tops数组，更新tops的值
@@ -64,10 +70,15 @@
         });
       });
     },
+    components:{
+      CartControl,
+      Food,
+    },
     data() {
       return {
         scrollY: 0, //右侧列表滑动的top值，以正值去计算。
         tops: [],  // 右侧列表的top（每个li分类的开始）的tops数组
+        food:{},   //指定点击的那个food信息
       }
     },
     computed: {
@@ -116,7 +127,7 @@
 
         //绑定scroll事件监听，动态修改scrollY的值
         this.rightScroll.on('scroll', ({x, y}) => {
-          console.log('scroll', x, y);
+          //console.log('scroll', x, y);
           this.scrollY = Math.abs(y);  //保存的值是正值
 
 
@@ -150,6 +161,14 @@
         //立即更新scrollY 以确保立即变白
         this.scrollY = top;
         this.rightScroll.scrollTo(0, -top, 300, bounce)
+      },
+
+      //显示当前用户点击的food的详情
+      showFood (food) {
+        //更新状态food
+        this.food = food;
+        //显示food(父组件要用子组件的方法-->得到标签对象)
+        this.$refs.sonFood.toggleIsShowFood();
       }
     }
   };
@@ -252,6 +271,6 @@
           .cartcontrol-wrapper
             position: absolute
             right: 0
-            bottom: 12px
+            bottom: 4px
 </style>
 

@@ -18,7 +18,9 @@ import {
   RESET_USER,
   RECEIVE_GOODS,
   RECEIVE_RATINGS,
-  RECEIVE_INFO
+  RECEIVE_INFO,
+  INCREMENTCOUNT,
+  DECREMENTCOUNT
 } from './mutation-types';
 
 export default {
@@ -95,4 +97,15 @@ export default {
       commit(RECEIVE_INFO, {info: result.data});
     }
   },
+
+  //同步增减food数量的函数
+  updateFoodCount ({commit},{isAdd,food}) {
+    if(isAdd){
+      //增
+      commit(INCREMENTCOUNT,{food})
+    }else{
+      //减
+      commit(DECREMENTCOUNT,{food})
+    }
+  }
 };

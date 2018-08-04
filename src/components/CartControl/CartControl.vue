@@ -1,15 +1,24 @@
 <template>
   <div class="cartcontrol">
-    <div class="iconfont icon-remove_circle_outline"></div>
-    <div class="cart-count">1</div>
-    <div class="iconfont icon-add_circle"></div>
+    <transition name="move">
+      <div class="iconfont icon-remove_circle_outline" v-if="food.count" @click="updateFoodCount(false)"></div>
+    </transition>
+    <transition name="move">
+    <div class="cart-count" v-if="food.count">{{food.count}}</div>
+    </transition>
+    <div class="iconfont icon-add_circle" @click.stop="updateFoodCount(true)"></div>
   </div>
 </template>
 
 <script>
   export default {
     props:{
-      food:Object,
+      food:Object,  //更新在shopGoods组件中增减，父子组件直接用vuex去管理状态呗
+    },
+    methods:{
+      updateFoodCount (isAdd) {
+        this.$store.dispatch('updateFoodCount',{isAdd,food:this.food})
+      }
     }
   }
 </script>
@@ -31,6 +40,11 @@
       line-height 24px
       font-size 24px
       color $green
+      &.move-enter-active,&.move-leave-active
+        transition all .3s
+      &.move-enter,&.move-leave-to
+        opacity 0
+        transform translateX(15px) rotate(180deg)
     .cart-count
       display: inline-block
       vertical-align: top
