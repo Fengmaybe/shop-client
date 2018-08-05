@@ -23,7 +23,7 @@
     mounted () {
       this.$store.dispatch('getInfo');
 
-      this.$store.dispatch('getRatings');
+
     },
     components:{
       ShopHeader
@@ -35,12 +35,23 @@
   .tab
     height 40px
     line-height 40px
-    bottom-border-1px(rgba(7, 17, 27, 0.1))
+    position relative
+    border none
+    &:after
+      content ''
+      position absolute
+      left 0
+      bottom 4px
+      width 100%
+      height 1px
+      background-color rgba(7, 17, 27, 0.1)
+      transform scaleY(0.5)
     .tab-item
       float left
       width: 33.33333%
       text-align center
       font-size 14px
+      bootom 4px !important
       color rgb(77, 85, 93)
       a
         display block

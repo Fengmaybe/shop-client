@@ -132,10 +132,6 @@ npm run build --report
     2). mockjs的理解和使用
     3). json数据设计的理解
 
-## day04
-## 1. ShopHeader组件
-
-## 2. ShopGoods组件
 
 ## 功能:
     1. 滑动右侧列表, 左侧会同步更新当前分类
@@ -149,4 +145,77 @@ npm run build --report
       1). 绑定点击监听
       2). 通过rightScroll滚动到对应的位置
       3). 立即更新scrollY
+
+## day04
+## 1. ShopHeader组件
+    1). 异步显示数据效果的编码流程
+        ajax
+          ajax请求函数
+          接口请求函数
+        vuex
+          state
+          mutation-types
+          actions
+          mutations
+        组件
+          dispatch(): 异步获取后台数据到vuex的state
+          mapState(): 从vuex的state中读取对应的数据
+          模板中显示
+    2). 初始显示异常
+        情况: Cannot read property 'xxx' of undefined"
+          原因: 初始值是空对象, 内部没有数据, 而模块中直接显示3层表达式
+          解决: 使用v-if指令
+    3). vue transition动画
+
+## 2. ShopGoods组件
+    1). 动态展现列表数据
+    2). 基本滑动:
+        使用better-scroll
+        理解其基本原理
+        创建BScroll对象的时机
+          watch + $nextTick()
+          自定义callback + $nextTick
+        better-scroll禁用了原生的dom事件, 使用的是自定义事件
+        绑定监听: scroll/scrollEnd
+        滚动监听的类型: probeType
+        列表滑动的2种类型
+            手指触摸
+            惯性/编码
+    3). 滑动右侧列表, 左侧会同步更新当前分类
+        1). 设计一个计算属性: currentIndex代表当前分类的下标
+        2). 相关数据
+          滚动的y坐标: scrollY---> 给右侧列表绑定一个滚动的监听
+          右侧分类<li>的top数组: tops-->列表第一次显示之后统计
+        3). 计算的逻辑
+           scrollY>=top && scrollY<nextTop
+    4). 点击左侧分类项, 右侧列表滑动到对应位置
+        1). 绑定点击监听
+        2). 通过rightScroll滚动到对应的位置
+        3). 立即更新scrollY
+
+
+## day05
+    1). 创建Swiper/BScroll对象后, 轮播/滑动没有效果?
+   		原因: 创建对象太早, 得在数据显示后创建
+   		解决: watch + $nextTick() 或 callback + $nextTick()
+   	2). 初始显示异常
+   	    情况1: Cannot read property 'xxx' of undefined"
+   	    原因: 初始值是空对象, 内部没有数据, 而模块中直接显示3层表达式
+   	    解决: 使用v-if指令
+
+   	    情况2: Cannot read property 'avatar' of null"
+   	    原因: 初始值是null, 而模块中直接显示2层表达式
+   	    解决: 初始值为{}
+   	3). 问题: 更新状态数据, 对应的界面不变化
+   	    原因: 一般方法给一个已有绑定的对象中添加一个新的属性, 这个属性没有数据绑定的。
+   	    因为没有数据绑定，故没有数据劫持，故此属性没有set，故要用Vue.set(对象，属性名，属性值)去设置
+   	    解决:
+   	        Vue.set(obj, 'xxx', value)才有数据绑定
+   	        this.$set(obj, 'xxx', value)才有数据绑定（vm代理）
+   	4). 问题: 点击添加购物项, 会1次添加多个
+   	    原因: 创建了多个BScroll对象来管理同一个DOM元素
+   	    解决: 只创建一个BScroll对象
+   	    扩展: 单例对象:
+   	        创建前, 先判断是否已经存在, 只有不存在才创建
+   	        创建后, 保存创建的对象
 

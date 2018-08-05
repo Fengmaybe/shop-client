@@ -88,7 +88,13 @@
         const {scrollY, tops} = this;
         //tops : [0,5,10,15]
         //scrollY : 12 锁定下标为2 -->显示左侧列表的下标为2
-        return tops.findIndex((top, index) => scrollY >= top && scrollY < tops[index + 1]);
+        const index = tops.findIndex((top, index) => scrollY >= top && scrollY < tops[index + 1]);
+
+        //处理左侧列表同步右侧滚动的效果
+        this._handleScrollLeftList(index);
+
+        return index;
+
       }
     },
     methods: {
@@ -121,7 +127,7 @@
         //右侧列表
         this.rightScroll = new BScroll('.foods-wrapper', {
           click: true,  //使用bscroll库来派发click事件
-          probeType: 2 //非实时。betterscroll默认禁用了所有原生事件，故要从库里自动派发事件。
+          probeType: 3 //非实时。betterscroll默认禁用了所有原生事件，故要从库里自动派发事件。
           // 手指触摸才猝发，且一定距离，且不监听惯性滑动。
         });
 
@@ -153,14 +159,26 @@
 
       },
 
+      //左侧滑动
+      _handleScrollLeftList (index) {
+        if(this.leftScroll){
+          //要滚动的那个li位置（那个方法是可行的，居然可在可视区域上显示，很棒啊！之前用scrollTo）
+          const li = this.$refs.leftUl.children[index];
+          //用滚动对象调用scrollToElement(el, time, offsetX, offsetY, easing)方法
+          this.leftScroll.scrollToElement(li,300,false,false,bounce);
+        }
+      },
+
       //事件函数
       redirectGood (index) {
+
         //1.接受用户点击哪个左侧的下标，对应去滑动到指定位置且2.改变scrollY的值以确保可以直接显示更新
         //scrollY的值就是top值
         const top = this.tops[index];  //top为正
         //立即更新scrollY 以确保立即变白
         this.scrollY = top;
-        this.rightScroll.scrollTo(0, -top, 300, bounce)
+        this.rightScroll.scrollTo(0, -top, 300, bounce);
+
       },
 
       //显示当前用户点击的food的详情

@@ -5,6 +5,7 @@ import router from './router';
 import store from './store';
 
 import './mock/mockServer'
+import './filters'
 
 import {Button,Range,Header, Swipe, SwipeItem,Popup,Progress } from 'mint-ui'
 Vue.component(Button.name, Button);
