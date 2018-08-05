@@ -42,6 +42,7 @@
           </li>
         </ul>
       </div>
+      <ShopCart />
     </div>
     <Food :food="food" ref="sonFood"/>
   </div>
@@ -54,6 +55,7 @@
 
   import CartControl from '../../../components/CartControl/CartControl';
   import Food from '../../../components/Food/Food';
+  import ShopCart from '../../../components/ShopCart/ShopCart';
 
   export default {
     mounted() {
@@ -67,12 +69,16 @@
           //初始化滚动的一些逻辑，更新scrollY的值
           this._initScroll();
 
+
+
+
         });
       });
     },
     components:{
       CartControl,
       Food,
+      ShopCart
     },
     data() {
       return {
@@ -89,9 +95,23 @@
         //tops : [0,5,10,15]
         //scrollY : 12 锁定下标为2 -->显示左侧列表的下标为2
         const index = tops.findIndex((top, index) => scrollY >= top && scrollY < tops[index + 1]);
+        //处理左侧列表同步右侧滚动的效果--这种做法有小bug
+        //this._handleScrollLeftList(index);
+        if(this.leftScroll){
+          const LiHeight = this.$refs.leftUl.firstElementChild.clientHeight;
+          if(index===7) {
+            //列表向上移动一格
+            this.leftScroll.scrollTo(0,-LiHeight,300)
+          }else if(index === 8){
+            //列表向上移动两位
+            this.leftScroll.scrollTo(0,-LiHeight*2,300)
+          }else{
+            //一格都不要移动
+            this.leftScroll.scrollTo(0,0)
+          }
 
-        //处理左侧列表同步右侧滚动的效果
-        this._handleScrollLeftList(index);
+        }
+
 
         return index;
 
@@ -160,14 +180,14 @@
       },
 
       //左侧滑动
-      _handleScrollLeftList (index) {
+      /*_handleScrollLeftList (index) {
         if(this.leftScroll){
           //要滚动的那个li位置（那个方法是可行的，居然可在可视区域上显示，很棒啊！之前用scrollTo）
           const li = this.$refs.leftUl.children[index];
           //用滚动对象调用scrollToElement(el, time, offsetX, offsetY, easing)方法
           this.leftScroll.scrollToElement(li,300,false,false,bounce);
         }
-      },
+      },*/
 
       //事件函数
       redirectGood (index) {
@@ -198,7 +218,7 @@
   .goods
     display: flex
     position: absolute
-    top: 265px
+    top: 250px
     bottom: 46px
     width: 100%
     background: #fff;

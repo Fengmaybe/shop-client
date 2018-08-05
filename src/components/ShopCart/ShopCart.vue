@@ -1,49 +1,124 @@
+<template>
 <div>
   <div class="shopcart">
     <div class="content">
-      <div class="content-left">
+      <div class="content-left" @click="toggleShow">
         <div class="logo-wrapper">
-          <div class="logo highlight">
-            <i class="iconfont icon-shopping_cart highlight"></i>
+          <div class="logo" :class="{highlight:CartFoodCount}">
+            <i class="iconfont icon-shopping_cart" :class="{highlight:CartFoodCount}"></i>
           </div>
-          <div class="num">1</div>
+          <div class="num">{{CartFoodCount}}</div>
         </div>
-        <div class="price highlight">￥10</div>
-        <div class="desc">另需配送费￥4元</div>
+        <div class="price" :class="{highlight:CartFoodPrice}">￥{{CartFoodPrice}}</div>
+        <div class="desc">另需配送费￥{{info.deliveryPrice}}元</div>
       </div>
       <div class="content-right">
-        <div class="pay not-enough">
-          还差￥10元起送
+        <div class="pay" :class="payClass">
+          {{payText}}
         </div>
       </div>
     </div>
-    <div class="shopcart-list" style="display: none;">
+    <transition name="move">
+    <div class="shopcart-list" v-show="showList">
       <div class="list-header">
         <h1 class="title">购物车</h1>
         <span class="empty">清空</span>
       </div>
-      <div class="list-content">
+      <div class="list-content" ref="listWrapper">
         <ul>
-          <li class="food">
-            <span class="name">红枣山药糙米粥</span>
-            <div class="price"><span>￥10</span></div>
+          <li class="food" v-for="(CartFood,index) in CartFoods" :key="index">
+            <span class="name">{{CartFood.name}}</span>
+            <div class="price"><span>￥{{CartFood.price}}</span></div>
             <div class="cartcontrol-wrapper">
-              <div class="cartcontrol">
-                <div class="iconfont icon-remove_circle_outline"></div>
-                <div class="cart-count">1</div>
-                <div class="iconfont icon-add_circle"></div>
-              </div>
+              <CartControl :food="CartFood"/>
             </div>
           </li>
         </ul>
       </div>
     </div>
+    </transition>
   </div>
-  <div class="list-mask" style="display: none;"></div>
+  <div class="list-mask" v-show="showList" @click="toggleShow"></div>
 </div>
+</template>
 
 <script>
-  export default {}
+  /*
+  购物车状态的设计：goods-foods-food去遍历其count的数量时比较效率低的
+  直接state管理购物车的状态即可。当count从0变1 就添加购物车  当count从1变0 就从购物车删除
+   */
+  import BScroll from 'better-scroll';
+  import {mapState,mapGetters} from 'vuex';
+  import CartControl from '../CartControl/CartControl';
+  export default {
+    data (){
+      return {
+        isShow:false,
+      }
+    },
+    components:{
+      CartControl,
+    },
+    computed:{
+      ...mapState(['CartFoods','info']),
+      ...mapGetters(['CartFoodCount','CartFoodPrice']),
+      payText () {
+        //由info.deliveryPrice  info.minPrice CartFoodPrice决定
+        const {CartFoodPrice} = this;
+        const {deliveryPrice,minPrice} = this.info;
+        if(CartFoodPrice===0){
+          return `￥${minPrice}元起送`;
+        }else if(CartFoodPrice<minPrice){
+          return `还差￥${minPrice-CartFoodPrice}元起送`;
+        }else{
+          return '去结算'
+        }
+      },
+      payClass () {
+        //由info.minPrice CartFoodPrice决定
+        const {CartFoodPrice} = this;
+        const {minPrice} = this.info;
+        if(minPrice>CartFoodPrice){
+          return 'not-enough'
+        }else{
+          return 'enough'
+        }
+      },
+      showList () {
+        if(this.CartFoodCount===0){
+          this.isShow = false; //当数量减为0时，还要改变isShow为FALSE
+          return false;  //如果总数量为0，直接隐藏
+        }
+        //当列表显示的时候，我创建滚动对象
+        if(this.isShow){
+          this.$nextTick(()=>{
+            //界面更新完成
+            //完成单例对象，解决click点击多次问题
+            if(!this.scrollFood){
+             this.scrollFood = new BScroll(this.$refs.listWrapper,{
+                click:true,
+              })
+            }else{
+              //当创建滚动对象时那一刻是没有形成滚动，那么之后增加就不会滚动，故要每次重新刷新
+              this.scrollFood.refresh();
+            }
+
+          });
+
+        }
+        //否则，看isShow的状态
+        return this.isShow
+      }
+    },
+    methods:{
+      toggleShow () {
+        //要切换isShow只有当数量不为0
+        if(this.CartFoodCount>0){
+          this.isShow = !this.isShow;
+        }
+      }
+    }
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
@@ -140,6 +215,11 @@
       top: 0
       z-index: -1
       width: 100%
+      transform translateY(-100%)
+      &.move-enter-active,&.move-leave-active
+        transition transform .3s
+      &.move-enter,&.move-leave-to
+        transform translateY(0)
       .list-header
         height: 40px
         line-height: 40px

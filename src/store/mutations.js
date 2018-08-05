@@ -44,7 +44,9 @@ export default {
       //count=1;  //初始化
       // 问题: 新添加的属性没有数据劫持==>数据绑定==>更新了数据但界面不变
       //对象，属性名，属性值  在food新增属性上本无数据绑定，可通过set来设置
-      Vue.set(food,'count',1)
+      Vue.set(food,'count',1);
+      //count从0变1
+      state.CartFoods.push(food);
     }else{
       food.count++;
     }
@@ -52,6 +54,10 @@ export default {
   [DECREMENTCOUNT] (state,{food}) {
     if(food.count){ //只有有值才去减少
       food.count--;
+      if(food.count===0){
+        //count从1变0
+        state.CartFoods.splice(state.CartFoods.indexOf(food),1);
+      }
     }
   },
 }
