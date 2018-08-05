@@ -53,11 +53,20 @@
   import BScroll from 'better-scroll';
   import bounce from 'better-scroll';
 
+
   import CartControl from '../../../components/CartControl/CartControl';
   import Food from '../../../components/Food/Food';
   import ShopCart from '../../../components/ShopCart/ShopCart';
 
   export default {
+    data() {
+      return {
+        scrollY: 0, //右侧列表滑动的top值，以正值去计算。
+        tops: [],  // 右侧列表的top（每个li分类的开始）的tops数组
+        food:{},   //指定点击的那个food信息
+        isNeedScroll:true,  //左边的列表是否需要滚动
+      }
+    },
     mounted() {
       this.$store.dispatch('getGoods', () => {
 
@@ -69,9 +78,6 @@
           //初始化滚动的一些逻辑，更新scrollY的值
           this._initScroll();
 
-
-
-
         });
       });
     },
@@ -79,13 +85,6 @@
       CartControl,
       Food,
       ShopCart
-    },
-    data() {
-      return {
-        scrollY: 0, //右侧列表滑动的top值，以正值去计算。
-        tops: [],  // 右侧列表的top（每个li分类的开始）的tops数组
-        food:{},   //指定点击的那个food信息
-      }
     },
     computed: {
       ...mapState(['goods']),
@@ -97,7 +96,7 @@
         const index = tops.findIndex((top, index) => scrollY >= top && scrollY < tops[index + 1]);
         //处理左侧列表同步右侧滚动的效果--这种做法有小bug
         //this._handleScrollLeftList(index);
-        if(this.leftScroll){
+        if(this.leftScroll && this.isNeedScroll){
           const LiHeight = this.$refs.leftUl.firstElementChild.clientHeight;
           if(index===7) {
             //列表向上移动一格
@@ -111,10 +110,7 @@
           }
 
         }
-
-
         return index;
-
       }
     },
     methods: {
@@ -147,13 +143,14 @@
         //右侧列表
         this.rightScroll = new BScroll('.foods-wrapper', {
           click: true,  //使用bscroll库来派发click事件
-          probeType: 3 //非实时。betterscroll默认禁用了所有原生事件，故要从库里自动派发事件。
+          probeType: 2 //非实时。betterscroll默认禁用了所有原生事件，故要从库里自动派发事件。
           // 手指触摸才猝发，且一定距离，且不监听惯性滑动。
         });
 
         //绑定scroll事件监听，动态修改scrollY的值
         this.rightScroll.on('scroll', ({x, y}) => {
           //console.log('scroll', x, y);
+          this.isNeedScroll=true;
           this.scrollY = Math.abs(y);  //保存的值是正值
 
 
@@ -164,19 +161,16 @@
           console.log(leftLiHeight);
           this.leftScroll.scrollTo(0, - this.currentIndex*leftLiHeight, 200, bounce)*/
 
-
-
-        }),
+        })
 
           //绑定scrollEnd事件监听，动态修改scrollY的值
           this.rightScroll.on('scrollEnd', ({x, y}) => {
             //console.log('scroll', x, y);
             this.scrollY = Math.abs(y);  //保存的值是正值
           })
-        this.leftScroll.on('scroll',()=>{
-
-        })
-
+        // this.leftScroll.on('scroll',()=>{
+        //
+        // })
       },
 
       //左侧滑动
@@ -194,6 +188,7 @@
 
         //1.接受用户点击哪个左侧的下标，对应去滑动到指定位置且2.改变scrollY的值以确保可以直接显示更新
         //scrollY的值就是top值
+        this.isNeedScroll=false;
         const top = this.tops[index];  //top为正
         //立即更新scrollY 以确保立即变白
         this.scrollY = top;

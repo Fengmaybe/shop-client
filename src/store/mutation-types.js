@@ -11,3 +11,6 @@ export const RECEIVE_INFO = 'receive_info';
 
 export const INCREMENTCOUNT = 'incrementCount';
 export const DECREMENTCOUNT = 'decrementCount';
+export const CLEAR_CART = 'clear_cart';
+
+export const RECEIVE_SEARCH_SHOPS = 'receive_search_shops';

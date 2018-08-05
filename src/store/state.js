@@ -12,4 +12,5 @@ export default {
   ratings:[],  //商家详情--评价
   info:{},  //商家详情--信息
   CartFoods:[],  //购物车的列表信息（相对而言是比较小的数组）
+  searchShops:[], //搜索商家列表
 }

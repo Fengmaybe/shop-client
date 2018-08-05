@@ -22,7 +22,7 @@
     <div class="shopcart-list" v-show="showList">
       <div class="list-header">
         <h1 class="title">购物车</h1>
-        <span class="empty">清空</span>
+        <span class="empty" @click="clearCart">清空</span>
       </div>
       <div class="list-content" ref="listWrapper">
         <ul>
@@ -48,6 +48,7 @@
   直接state管理购物车的状态即可。当count从0变1 就添加购物车  当count从1变0 就从购物车删除
    */
   import BScroll from 'better-scroll';
+  import { MessageBox } from 'mint-ui';
   import {mapState,mapGetters} from 'vuex';
   import CartControl from '../CartControl/CartControl';
   export default {
@@ -116,6 +117,11 @@
         if(this.CartFoodCount>0){
           this.isShow = !this.isShow;
         }
+      },
+      clearCart () {
+        MessageBox.confirm('确定清空购物车么？').then(action => {
+        this.$store.dispatch('clearCart');
+        },()=>{});
       }
     }
   }

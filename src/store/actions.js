@@ -8,7 +8,8 @@ import {
   reqLayout,
   reqGoods,
   reqRatings,
-  reqInfo
+  reqInfo,
+  reqShopsOfKeys,
 } from '../api';
 import {
   RECEIVE_ADDRESS,
@@ -20,7 +21,9 @@ import {
   RECEIVE_RATINGS,
   RECEIVE_INFO,
   INCREMENTCOUNT,
-  DECREMENTCOUNT
+  DECREMENTCOUNT,
+  CLEAR_CART,
+  RECEIVE_SEARCH_SHOPS
 } from './mutation-types';
 
 export default {
@@ -109,5 +112,23 @@ export default {
       //减
       commit(DECREMENTCOUNT,{food})
     }
-  }
+  },
+
+  //同步清空购物车
+  clearCart ({commit}) {
+    commit(CLEAR_CART)
+  },
+
+  //异步获取搜索商家列表
+  async searchShops({commit, state},keyword) {
+    // const geohash = state.latitude + ',' + state.longitude;
+    /*?latitude=40.10038&longitude=116.36867*/
+    const geohash = '40.10038,116.36867';
+    const result = await reqShopsOfKeys(geohash, keyword);
+    if (result.code === 0) {
+      //请求成功
+      const  searchShops = result.data;
+      commit(RECEIVE_SEARCH_SHOPS, {searchShops});
+    }
+  },
 };

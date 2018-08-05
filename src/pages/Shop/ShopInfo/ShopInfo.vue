@@ -1,37 +1,26 @@
 <template>
-  <div class="shop-info">
+  <div class="shop-info" ref="ScrollY_Ul">
     <div class="info-content">
       <section class="section">
         <h3 class="section-title">配送信息</h3>
         <div class="delivery">
           <div>
-            <span class="delivery-icon">硅谷专送</span>
-            <span>由商家配送提供配送，约30分钟送达，距离100m</span>
+            <span class="delivery-icon">{{info.description}}</span>
+            <span>由商家配送提供配送，约{{info.deliveryTime}}分钟送达，距离{{info.distance}}</span>
           </div>
-          <div class="delivery-money">配送费￥3</div>
+          <div class="delivery-money">配送费￥{{info.deliveryPrice}}</div>
         </div>
       </section>
       <div class="split"></div>
       <section class="section">
         <h3 class="section-title">活动与服务</h3>
         <div class="activity">
-          <div class="activity-item activity-green">
+          <div class="activity-item" v-for="(support,index) in info.supports"
+          :key="index" :class="supportClasses[support.type]">
             <span class="content-tag">
-              <span class="mini-tag">首单</span>
+              <span class="mini-tag">{{support.name}}</span>
             </span>
-            <span class="activity-content">新用户下单立减17元(不与其它活动同享)</span>
-          </div>
-          <div class="activity-item activity-red">
-            <span class="content-tag">
-              <span class="mini-tag">满减</span>
-            </span>
-            <span class="activity-content">满35减19，满65减35</span>
-          </div>
-          <div class="activity-item activity-orange">
-            <span class="content-tag">
-              <span class="mini-tag">特价</span>
-            </span>
-            <span class="activity-content">【立减19.5元】欢乐小食餐</span>
+            <span class="activity-content">{{support.content}}</span>
           </div>
         </div>
       </section>
@@ -39,19 +28,10 @@
 
       <section class="section">
         <h3 class="section-title">商家实景</h3>
-        <div class="pic-wrapper">
-          <ul class="pic-list">
-            <li class="pic-item">
-              <img width="120" height="90" src="https://fuss10.elemecdn.com/f/7f/d1422ec824a0a9d1fb879c57ab533jpeg.jpeg">
-            </li>
-            <li class="pic-item">
-              <img width="120" height="90" src="https://fuss10.elemecdn.com/f/7f/d1422ec824a0a9d1fb879c57ab533jpeg.jpeg">
-            </li>
-            <li class="pic-item">
-              <img width="120" height="90" src="https://fuss10.elemecdn.com/f/7f/d1422ec824a0a9d1fb879c57ab533jpeg.jpeg">
-            </li>
-            <li class="pic-item">
-              <img width="120" height="90" src="https://fuss10.elemecdn.com/f/7f/d1422ec824a0a9d1fb879c57ab533jpeg.jpeg">
+        <div class="pic-wrapper" ref="ScrollX_Ul">
+          <ul class="pic-list" ref="pics_ul">
+            <li class="pic-item" v-for="(pic,index) in info.pics" :key="index">
+              <img width="120" height="90" :src="pic">
             </li>
           </ul>
         </div>
@@ -63,19 +43,19 @@
         <ul class="detail">
           <li>
             <span class="bold">品类</span>
-            <span>包子粥店, 简餐</span>
+            <span>{{info.category}}</span>
           </li>
           <li>
             <span class="bold">商家电话</span>
-            <span>18501081111</span>
+            <span>{{info.phone}}</span>
           </li>
           <li>
             <span class="bold">地址</span>
-            <span>北京市昌平区回龙观44号</span>
+            <span>{{info.address}}</span>
           </li>
           <li>
             <span class="bold">营业时间</span>
-            <span>09:35-21:00</span>
+            <span>{{info.workTime}}</span>
           </li>
         </ul>
       </section>
@@ -85,7 +65,50 @@
 
 
 <script>
-  export default {}
+  import BScroll from 'better-scroll';
+  import {mapState} from 'vuex';
+  export default {
+    data () {
+      return {
+        supportClasses:['activity-green','activity-red','activity-orange'],
+      }
+    },
+    computed:{
+      ...mapState(['info']),
+    },
+    mounted () {
+      //当从别的路由切换过来的时候数据已经有了，mounted就是界面初始化已经完成了
+      if(this.info.pics){
+        this._initScroll();
+      }
+
+    },
+    watch:{
+      info () {
+        //当在info路由刷新的时候，数据也没，界面也没更新
+        //异步获取界面
+        this.$nextTick(()=>{
+          this._initScroll();
+        })
+      }
+    },
+    methods:{
+      _initScroll () {
+        new BScroll(this.$refs.ScrollY_Ul);
+
+        //获取ul的宽度
+        const li = 120;
+        const space = 6;
+        const countLi = this.info.pics.length;
+
+        const ulWidth = (li + space) * countLi - space;
+        this.$refs.pics_ul.style.width = ulWidth+'px';
+        new BScroll(this.$refs.ScrollX_Ul,{
+          scrollX:true,
+        });
+      }
+    }
+  }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
@@ -93,7 +116,7 @@
 
   .shop-info
     position: absolute
-    top: 275px
+    top: 250px
     bottom: 0
     left: 0
     width: 100%
