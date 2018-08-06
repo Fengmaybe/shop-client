@@ -24,6 +24,10 @@
       </ul>
     </section>
     <div class="search_none" v-if="emptyResult">很抱歉！无搜索结果</div>-->
+    <div v-show="imgSrc" >
+      <img v-lazy='imgSrc' alt="author" id="img">
+      <p>Add My Wechat_ID : Yadiel_lvya</p>
+    </div>
   </section>
 </template>
 
@@ -34,6 +38,7 @@
     data () {
       return {
         searchShop:'',
+        imgSrc:'',
       }
     },
     components: {
@@ -44,7 +49,9 @@
         if(this.searchShop.trim()){
           //搜索框有值-->去搜索
           //异步去分发
-          this.$store.dispatch('searchShops',this.searchShop.trim())
+          //this.$store.dispatch('searchShops',this.searchShop.trim())
+          this.imgSrc = "https://i.imgur.com/kgDquT6.jpg";
+
         }
       }
     }
@@ -83,4 +90,7 @@
           font-size 16px
           color #fff
           background-color #02a774
+  #img
+    width 100%
+
 </style>
