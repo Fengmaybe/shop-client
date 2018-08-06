@@ -218,4 +218,42 @@ npm run build --report
    	    扩展: 单例对象:
    	        创建前, 先判断是否已经存在, 只有不存在才创建
    	        创建后, 保存创建的对象
+## 1. CartControl组件
+    1). 问题: 更新状态数据, 对应的界面不变化
+        原因: 一般方法给一个已有绑定的对象中添加一个新的属性, 这个属性没有数据绑定
+        解决:
+            Vue.set(obj, 'xxx', value)才有数据绑定
+            this.$set(obj, 'xxx', value)才有数据绑定
 
+## 2. ShopCart组件
+    1). 使用vuex管理购物项数据: cartFoods
+      count增加为1: 将food添加到cartFoods中
+      count减少为0, 将food从cartFoods中删除
+    2). 解决几个功能性bug
+        a. 删除所有购物项, 购物车列表还打开着: 显示条件-->listShow----isShow/cartFoodCount
+        b. 添加一个购物项, 购物车列表自动打开: 当cartFoodCount为0, 设置isShow=false
+        c. 购物车列表不能滑动: 创建BScroll对象
+        d. 购物车列表中点一次添加, 会增加多次
+            原因: 同一个列表, 创建了多个scroll对象
+            解决: 只创建一个scroll对象(单例对象)
+                1). 创建之前, 判断对象不存在
+                2). 创建之后, 保存对象
+        e. 打开时, 可能没有滚动
+             scroll.refresh()
+
+## 3. Food组件
+    1). 父子组件:
+        子组件调用父组件的方法: 通过props将方法传递给子组件
+        父组件调用子组件的方法: 通过ref找到子组件标签对象
+     2). 事件冒泡的问题?
+        @click.stop='xxx'
+
+## 4. ShopRatings组件
+    1). 使用vue的自定义事件实现: 子组件向父组件通信
+        绑定事件监听: @eventName = 'callback'
+        触发/分发事件: this.$emit('eventName', data)
+    2). 使用计算属性对列表进行过滤显示
+    3). 自定义过滤的计算逻辑
+    4). 自定义日期过滤器
+
+## 5. ShopInfo组件
