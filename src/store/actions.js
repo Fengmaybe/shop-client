@@ -123,7 +123,8 @@ export default {
   async searchShops({commit, state},keyword) {
     // const geohash = state.latitude + ',' + state.longitude;
     /*?latitude=40.10038&longitude=116.36867*/
-    const geohash = '40.10038,116.36867';
+   // const geohash = '40.10038,116.36867';
+    const geohash = '28.42628,118.17648';
     const result = await reqShopsOfKeys(geohash, keyword);
     if (result.code === 0) {
       //请求成功

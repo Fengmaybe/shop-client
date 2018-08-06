@@ -5,10 +5,17 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
+//升级：路由组件懒加载
+const MSite = () => import('../pages/MSite/MSite');
+const Order = () => import('../pages/Order/Order');
+const Search = () => import('../pages/Search/Search');
+const Profile = () => import('../pages/Profile/Profile');
+
+/*
 import MSite from '../pages/MSite/MSite';
 import Order from '../pages/Order/Order';
 import Search from '../pages/Search/Search';
-import Profile from '../pages/Profile/Profile';
+import Profile from '../pages/Profile/Profile';*/
 import Login from '../pages/Login/Login';
 import UserInfo from '../pages/UserInfo/UserInfo';
 import Shop from '../pages/Shop/Shop';
@@ -23,7 +30,7 @@ export default new VueRouter({
   routes: [
     {
       path: '/msite',
-      component: MSite,
+      component: MSite,  //配置的是组件函数而非组件，按需加载。
       meta: {
         showFooter: true
       }

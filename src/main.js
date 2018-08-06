@@ -4,10 +4,18 @@ import App from './App'
 import router from './router';
 import store from './store';
 
+import {Button,Range,Header, Swipe, SwipeItem,Popup,Progress } from 'mint-ui'
+import VueLazyload from 'vue-lazyload';
+
+
 import './mock/mockServer'
 import './filters'
 
-import {Button,Range,Header, Swipe, SwipeItem,Popup,Progress } from 'mint-ui'
+import loading from './common/images/loading.gif';
+Vue.use(VueLazyload, {
+  loading
+});
+
 Vue.component(Button.name, Button);
 Vue.component(Header.name, Header);
 Vue.component(Range.name, Range);

@@ -29,6 +29,7 @@
       </div>
     </div>
     <!--初始化异步数据没拿到会报错？如何解决？产生问题的原因？三级表达式null.b-->
+    <!--v-if  v-show  在三级表达式上就可以解决-->
     <div class="shop-header-discounts" v-if="info.supports" @click="handleDiscounts">
       <div class="discounts-left">
         <div class="activity" :class="colorArray[info.supports[0].type]">
@@ -168,8 +169,8 @@
         left: 0
         .icon-arrow_left
           display: block
-          padding: 5px
-          font-size: 20px
+          padding: 16px
+          font-size: 24px
           color: #fff
 
     .shop-content
