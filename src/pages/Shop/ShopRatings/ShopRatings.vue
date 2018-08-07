@@ -138,7 +138,7 @@
       padding: 6px 0
       .overview-left
         flex: 0 0 137px
-        padding: 6px 0
+        padding: 20px 0
         width: 137px
         border-right: 1px solid rgba(7, 17, 27, 0.1)
         text-align: center
