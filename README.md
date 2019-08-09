@@ -19,7 +19,7 @@ npm run build --report
 ```
 
 ##技术点记录
-# day01
+
 ## 1. 项目开发准备
     项目描述
     技术选型
@@ -81,7 +81,7 @@ npm run build --report
         computed: 根据data/props/别的compute/state/getters
 
 
-# day02
+
 ## 1. 异步显示分类轮播
     通过vuex获取foodCategorys数组(发请求, 读取)
     对数据进行整合计算(一维变为特定的二维数组)
@@ -122,7 +122,7 @@ npm run build --report
     7). 退出登陆
         请求退出登陆的接口, 重置state中的user
 
-# day03
+
 ## 1. 搭建商家整体界面
     1). 拆分界面路由
     2). 路由的定义/配置|使用
@@ -146,7 +146,7 @@ npm run build --report
       2). 通过rightScroll滚动到对应的位置
       3). 立即更新scrollY
 
-## day04
+
 ## 1. ShopHeader组件
     1). 异步显示数据效果的编码流程
         ajax
@@ -194,7 +194,7 @@ npm run build --report
         3). 立即更新scrollY
 
 
-## day05
+
     1). 创建Swiper/BScroll对象后, 轮播/滑动没有效果?
    		原因: 创建对象太早, 得在数据显示后创建
    		解决: watch + $nextTick() 或 callback + $nextTick()
